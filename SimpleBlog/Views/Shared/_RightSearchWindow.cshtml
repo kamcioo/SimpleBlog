@@ -1,0 +1,52 @@
+﻿@model SimpleBlog.Models.CategoriesWithLastPosts
+<!-- Blog Search Well -->
+<div class="right-search-window-section">
+    <div class="right-search-window-section_search">
+        <h4>BLOG SEARCH</h4>
+        @using (Html.BeginForm("GetPostsByPhrase", "Post", FormMethod.Get))
+        {
+            <div class="input-group">
+                <input type="text" class="form-control" name="phrase">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        }
+    </div>
+    <!-- /.input-group -->
+
+    <div class="right-search-window-section_recent_posts">
+        <h4>RECENT POSTS</h4>
+        <ul class="list-unstyled">
+            @foreach (var p in Model.RecentPosts)
+            {
+                <li>
+                    @Html.RouteLink(p.PostTitle, "PostDetails", new { id = p.Id, name = p.GetTitleAsUrl() })
+                </li>
+                <hr />
+            }
+
+        </ul>
+    </div>
+    <div class="right-search-window-section_categories">
+        <h4>CATEGORIES</h4>
+        <div class="row">
+            <div class="col-lg-6">
+                <ul class="list-unstyled">
+                    @foreach (var m in Model.Categories)
+                    {
+                        <li>
+                            @Html.RouteLink(m.Name, "PostsByCategory", new { id = m.Id, category = m.Name }, new { @class = "category-button" })
+                        </li>
+                    }
+
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- /.row -->
+    
+</div>

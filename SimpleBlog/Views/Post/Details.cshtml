@@ -1,0 +1,163 @@
+﻿@model SimpleBlog.Models.PostDetailsViewModel
+@{
+    ViewBag.Title = "Details";
+}
+
+<div class="container post-details">
+    <div class="row">
+        <div class="col-md-12">
+            @if ((string)TempData["addError"] == "false")
+            {
+                <div class="alert alert-success alert-dismissable" role="alert">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+                    The post was successfully added!
+                </div>
+            }
+            @if ((string)TempData["editError"] == "false")
+            {
+                <div class="alert alert-success alert-dismissable" role="alert">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+                    The post was successfully edited!
+                </div>
+            }
+            <h1>
+                @Html.DisplayFor(model => model.Post.PostTitle)
+            </h1>
+
+            <p class="post-details_author">
+                by
+
+                <author>
+                    @Html.DisplayFor(model => model.Post.User.FullNameAndSurname)
+                </author>
+            </p>
+            <hr />
+            <div class="action-icons">
+                <span class="glyphicon glyphicon-time"></span>
+                Posted on @Html.DisplayFor(model => model.Post.AddedDate)
+                @if (Model.Post.User.UserName == User.Identity.Name || User.IsInRole("Admin"))
+            {
+                    <span class="glyphicon glyphicon-edit"></span>
+                    @Html.ActionLink("Edit", "Edit", "Post", new { id = Model.Post.Id }, new { @class = "action-icon" })
+                    <span class="glyphicon glyphicon-remove-circle"></span>
+                    @Html.ActionLink("Delete", "Delete", "Post", new { id = Model.Post.Id }, new { @class = "confirmation action-icon" })
+                }
+            </div>
+            <hr />
+            <img class="img-responsive" src="@Model.Post.ImagePath" alt="">
+            <hr />
+            <div class="post-content">
+                @Html.Raw(System.Web.HttpUtility.HtmlDecode(Model.Post.PostContent))
+            </div>
+        </div>
+        <hr />
+        @*@Html.Partial("_LeaveCommentPartial", Model.Comment)*@
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="col-md-12 comments-section">
+                <div class="well">
+                    <h4>Leave a Comment:</h4>
+                    @using (Html.BeginForm("Add", "Comment", FormMethod.Post))
+                {
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            @Html.HiddenFor(m => m.Comment.PostId, new { @Value = Model.Post.Id })
+                            @Html.TextAreaFor(m => m.Comment.Content, new { @class = "form-control", @rows = 4 })
+                            @Html.ValidationMessageFor(m => m.Comment.Content, "", new { @class = "text-danger" })
+                        </div>
+                        <button type="submit" class="btn btn-primary pull-right" name="postContent" value="addComment">Submit</button>
+                        <div class="clearfix"></div>
+                    }
+                </div>
+            </div>
+        }
+
+        <hr />
+        <div class="col-md-12">
+            @foreach (var c in Model.Post.Comments.OrderByDescending(p => p.DateAdded))
+            {
+                 <!--Comment section-->
+                string dynamicFormId = "form-" + c.Id.ToString();
+                string commentId = "comment-" + c.Id.ToString();
+                <div class="media" id="@commentId">
+                    <a class="pull-left" href="#">
+                        <span class="glyphicon glyphicon-user user-comment"></span>
+                    </a>
+                    <div class="media-body">
+                        <h4 class="media-heading">
+                            @c.User.FullNameAndSurname
+                            <small>@c.DateAdded.ToString("dd-MM-yyyy HH:mm")</small>
+                            @if (User.Identity.Name == c.User.UserName || User.IsInRole("Admin"))
+                            {
+
+                                <a href="@Url.Action("DeleteComment", "Comment", new { commentId = c.Id })">
+                                    <span class="glyphicon glyphicon-remove pull-right confirmation"></span>
+                                </a>
+                            }
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <a href="#">
+                                    <span class="glyphicon glyphicon-share-alt show-form pull-right" onclick="toggle('reply-form', '@dynamicFormId'); return false;"></span>
+                                </a>
+                            }
+                        </h4>
+                        <p>@c.Content</p>
+
+                        <!--Reply section-->
+                        @{var reply = c.Reply;}
+                        @if (reply != null)
+                        {
+
+                            foreach (var r in reply)
+                            {
+                                string replyId = "reply-" + r.Id.ToString();
+                                <div class="media" id="@replyId">
+                                    <a class="pull-left" href="#">
+                                        <span class="glyphicon glyphicon-user"></span>
+                                    </a>
+                                    <div class="media-body">
+                                        <h4 class="media-heading">
+                                            @r.User.FullNameAndSurname
+                                            <small>@r.DateAdded.ToString("dd-MM-yyyy HH:mm")</small>
+                                            @if (User.Identity.Name == r.User.UserName || User.IsInRole("Admin"))
+                                            {
+                                                <a href="@Url.Action("DeleteReply", "Comment", new { replyId = r.Id })">
+                                                    <span class="glyphicon glyphicon-remove pull-right confirmation"></span>
+                                                </a>
+                                            }
+                                            @if (User.Identity.IsAuthenticated)
+                                            {
+                                                <a href="#">
+                                                    <span class="glyphicon glyphicon-share-alt show-form pull-right" onclick="toggle('reply-form', '@dynamicFormId'); return false;"></span>
+                                                </a>
+                                            }
+                                        </h4>
+                                        <p>@r.Content</p>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        @using (Html.BeginForm("AddReply", "Comment", FormMethod.Post, new { @class = "reply-form", @id = @dynamicFormId, style = "display:none;" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.HiddenFor(m => m.Reply.CommentId, new { @Value = c.Id })
+                            @Html.TextAreaFor(m => m.Reply.Content, new { @class = "form-control", rows = 4 })
+                            @Html.ValidationMessageFor(m => m.Reply.Content,"", new { @class = "text-danger"}) 
+                            <button type="submit" class="btn btn-primary pull-right reply-button" name="replyContent" value="addReply">Reply</button>
+                        }
+                    </div>
+                </div>
+                            }
+        </div>
+    </div>
+</div>
+@{ string scrollId = (string)TempData["scrollId"];
+}
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/confirmation.js"></script>
+    <script src="~/Scripts/show-hide-forms-in-comments.js"></script>
+    <script>
+        window.onload = scrollIntoId('@scrollId')
+    </script>
+}

@@ -1,0 +1,27 @@
+﻿@model SimpleBlog.Models.CategoryViewModel
+
+@{
+    ViewBag.Title = "ManageCategories";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<h2>ManageCategories</h2>
+
+
+@*<h4>Add Category</h4>
+@using(Html.BeginForm("Add", "Category", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationMessageFor(m => m.AddCategoryModel.Category.Name)
+    @Html.TextBoxFor(m => m.AddCategoryModel.Category.Name)
+    <input type="submit" class="btn btn-success btn-sm" value="Add"/>
+}*@
+
+@Html.Partial("_AddCategoryPartial", new SimpleBlog.Models.AddCategoryViewModel())
+@Html.Partial("_EditCategoryPartial", Model.EditCategoryModel)
+
+
+@section scripts{
+@Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/confirmation.js"></script>
+    }

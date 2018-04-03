@@ -1,0 +1,32 @@
+﻿@model SimpleBlog.Models.BlogSettings
+@{
+    ViewBag.Title = "Manage global settings";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<h2>Manage global settings</h2>
+
+@using (Html.BeginForm("EditGlobalSettings", "Admin", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(l => l.Id)
+    @Html.LabelFor(l => l.PostsOnSite)
+    <div class="form-group">
+
+        @Html.TextBoxFor(l => l.PostsOnSite)
+        @Html.ValidationMessageFor(l => l.PostsOnSite, "", new { @class = "text-danger" })
+    </div>
+    @Html.LabelFor(l => l.RecentPosts)
+    <div class="form-group">
+
+        @Html.TextBoxFor(l => l.RecentPosts)
+        @Html.ValidationMessageFor(l => l.RecentPosts, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Edit" class="btn btn-success btn-sm" />
+    </div>
+}
+
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+}

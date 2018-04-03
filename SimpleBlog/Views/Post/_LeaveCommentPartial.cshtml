@@ -1,0 +1,23 @@
+﻿@model SimpleBlog.Models.Comment 
+
+<!-- Leave a comment section -->
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="col-md-12 comments-section">
+        <div class="well">
+            <h4>Leave a Comment:</h4>
+            @using (Html.BeginForm("Add", "Comment", FormMethod.Post))
+                {
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    @Html.Hidden("postId", Model.PostId)
+                    @*@Html.TextArea("commentContent", null, new { @class = "form-control", @rows = 4 })*@
+                    @Html.TextAreaFor(m => m.Content, new { @class = "form-control", @rows = 4 })
+                    @Html.ValidationMessageFor(m => m.Content,null, new { @class="text-danger"})
+                </div>
+                        <button type="submit" class="btn btn-primary pull-right" name="postContent" value="addComment">Submit</button>
+                        <div class="clearfix"></div>
+            }
+        </div>
+    </div>
+}

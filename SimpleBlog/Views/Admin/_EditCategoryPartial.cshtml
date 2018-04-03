@@ -1,0 +1,39 @@
+﻿@model SimpleBlog.Models.EditCategoryViewModel
+
+<h4>Categories</h4>
+<table class="table table-bordered">
+    <thead>
+    <th>Id</th>
+    <th>Name</th>
+    <th>Delete</th>
+    </thead>
+    <tbody>
+        @foreach (var c in Model.Categories)
+            {
+
+            <tr>
+                <td>
+                    @Html.DisplayFor(m => c.Id)
+                </td>
+                <td>
+                    @using (Html.BeginForm("ChangeName", "Category", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.TextBoxFor(m => m.EditedCategory.Name, new { @Value = c.Name })
+                        @Html.HiddenFor(m => m.EditedCategory.Id, new { @Value = c.Id })
+                        <input type="submit" class="btn btn-primary btn-sm" value="Edit" />
+                        @Html.ValidationMessageFor(m => m.EditedCategory.Name, "", new { @class = "text-danger" })
+                    }
+                </td>
+
+                <td class="td-center">
+                    <a href="@Url.Action("Delete", "Category", new { categoryId = c.Id })" class="confirmation">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                </td>
+            </tr>
+        }
+
+
+    </tbody>
+</table>

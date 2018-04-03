@@ -1,0 +1,65 @@
+﻿@model PagedList.IPagedList<SimpleBlog.Models.UserPostDetailsViewModel>
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "UserPosts";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="user-post-heading">Your posts</h2>
+            <table class="table table-striped">
+                    <tr>
+                        <th>
+                            @*@Html.DisplayNameFor(model => model.FirstOrDefault().PostTitle)*@
+                            @Html.ActionLink("Title", "UserPosts", new { sortOrder = ViewBag.TitleSortParm })
+                        </th>
+                        <th>
+                            @*@Html.DisplayNameFor(model => model.FirstOrDefault().AddedDate)*@
+                            @Html.ActionLink("Added Date", "UserPosts", new { sortOrder = ViewBag.DateSortParm })
+
+                        </th>
+                        <th>
+                            @*@Html.DisplayNameFor(model => model.FirstOrDefault().UpdatedDate)*@
+                            @Html.ActionLink("Updated Date", "UserPosts", new { sortOrder = ViewBag.UpdatedDateSortParm})
+                        </th>
+                        <th>
+                            
+                        </th>
+                    </tr>
+                
+                    @foreach (var post in Model)
+                    {
+                    <tr>
+                        <td>
+                            @Html.RouteLink(post.PostTitle, "PostDetails", new { id = post.Id, name = post.GetTitleAsUrl() })
+                        </td>
+                        <td>
+                            @Html.DisplayFor(p => post.AddedDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(p => post.UpdatedDate)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", "Post", new { id = post.Id }, new { @class = "btn btn-success" })
+                        </td>
+                    </tr>
+                    }
+               
+            </table>
+
+            
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <div class="">
+                    <br />
+                    Page @(Model.PageCount < Model.PageNumber ? 0 :
+                    @Model.PageNumber) of @Model.PageCount
+                    @Html.PagedListPager(Model, page => Url.Action("UserPosts", new { page }))
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

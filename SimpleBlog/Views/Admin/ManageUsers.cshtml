@@ -1,0 +1,109 @@
+﻿@model SimpleBlog.Models.UserRoleViewModel
+@{
+    ViewBag.Title = "ManageUsers";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+
+}
+
+<h2>ManageUsers</h2>
+<div class="panel-body">
+    <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
+        <thead>
+            <tr>
+                <th>User Name</th>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Email</th>
+                <th>Delete</th>
+                <th>Lockout</th>
+                <th>Roles</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int counter = 0;}
+            @foreach (var user in Model.UserModel)
+            {
+                <tr class="odd gradeX">
+                    <td>@user.UserName</td>
+                    <td>@user.FirstName</td>
+                    <td>@user.LastName</td>
+                    <td>@user.Email</td>
+                    <td class="td-center">
+                        <a href="@Url.Action("Delete", "Account", new { userName = user.UserName })" class="confirmation">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </a>
+                    </td>
+                    <td class="td-center">
+                        @if (user.LockoutEnabled == true && user.LockoutEndDateUtc > DateTime.Now)
+                        {
+                            @Html.ActionLink("Locked", "UnlockUser", "Account", new { userId = user.Id }, new { @class = "btn btn-sm btn-danger confirmation" })
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Unlocked", "LockUser", "Account", new { userId = user.Id }, new { @class = "btn btn-sm btn-success confirmation" })
+                        }
+
+                    </td>
+                    <td class="td-center">
+                        @foreach (var r in user.UserRoles)
+                        {
+                            var idForModal = "userRoleModal" + counter.ToString();
+                            var idForModalWithHash = "#" + idForModal;
+                            var userRoleModalLabel = "userRoleModalLabel" + counter.ToString();
+                            counter++;
+                            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="@idForModalWithHash">
+                                @r
+                            </button>
+
+                        <!-- Modal -->
+                            <div class="modal fade" id="@idForModal" tabindex="-1" role="dialog" aria-labelledby="@userRoleModalLabel">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" id="@userRoleModalLabel">Change role of user</h4>
+                                        </div>
+                                        <div class="modal-body">
+
+                                            @foreach (var appRole in Model.RolesInApp)
+                                            {
+
+                                                if (appRole.Name.Equals(r))
+                                                {
+                                                    <button class="btn btn-success">@appRole.Name</button>
+                                                }
+                                                else
+                                                {
+                                                    @Html.ActionLink(appRole.Name, "ChangeRole", "Account", new { userId = user.Id, roleName = appRole.Name }, new { @class = "btn btn-default" })
+                                                }
+                                            }
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </td>
+                </tr>
+            }
+
+
+        </tbody>
+    </table>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/dataTables.bootstrap.min.js"></script>
+    <script src="~/Scripts/dataTables.responsive.js"></script>
+    <script src="~/Scripts/confirmation.js"></script>
+    <script src="~/Scripts/sb-admin-2.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#dataTables-example').DataTable({
+                responsive: true
+            });
+        });
+    </script>
+}

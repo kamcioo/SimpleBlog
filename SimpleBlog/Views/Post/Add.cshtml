@@ -1,0 +1,97 @@
+﻿@model SimpleBlog.Models.UserPostAddViewModel
+
+<script src="~/scripts/tinymce/tinymce.min.js"></script>
+<script type="text/javascript">
+    tinymce.init({
+        mode: "specific_textareas",
+        editor_selector: "tiny-mce-editor",
+        menubar: false,
+        theme: "modern",
+        height: 500,
+        plugins: [
+          'advlist textcolor autolink lists link image charmap print preview anchor',
+          'searchreplace visualblocks code fullscreen',
+          'insertdatetime media table contextmenu paste code'
+        ],
+        toolbar: 'undo redo | insert | styleselect | bold italic  | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | preview',
+        content_css: '//www.tinymce.com/css/codepen.min.css'
+    });
+</script>
+
+<div class="container add-post-section">
+    <h2>ADD POST</h2>
+    <div class="row">
+        @using (Html.BeginForm("Add", "Post", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>
+                        @Html.DisplayNameFor(model => model.PostTitle)
+                    </label>
+                    @Html.TextBoxFor(model => model.PostTitle, new { @class = "post-title-text-box" })
+                    @Html.ValidationMessageFor(model => model.PostTitle, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>
+                        @Html.DisplayNameFor(model => model.PostIntro)
+                    </label>
+                    @Html.TextAreaFor(model => model.PostIntro, new { @class = "post-intro-text-box", rows = "4" })
+                    @Html.ValidationMessageFor(model => model.PostIntro, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Upload Image</label>
+                    <div class="input-group">
+                        <span class="input-group-btn">
+                            <span class="btn btn-default btn-file">
+                                Browse…
+                                @Html.TextBoxFor(model => model.ImageFile, new { type = "file", id = "imgInp" })
+                            </span>
+                        </span>
+                        <input type="text" class="form-control" readonly>
+                    </div>
+                    <img id='img-upload' />
+                    @Html.ValidationMessageFor(model => model.ImageFile, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>
+                        @Html.DisplayNameFor(model => model.Category)
+                    </label>
+                    @Html.DropDownListFor(model => model.SelectedCategory, new SelectList(Model.Categories, "Id", "Name"))
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>
+                        @Html.DisplayNameFor(model => model.PostContent)
+                    </label>
+                    <p>
+                        @Html.ValidationMessageFor(model => model.PostContent, "", new { @class = "text-danger" })
+                    </p>
+                    @Html.TextAreaFor(model => model.PostContent, new { @class = "tiny-mce-editor" })
+                </div>
+            </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="submit" value="Add" class="btn btn-success pull-right" />
+                    </div>
+                </div>
+        }
+    </div>
+</div>
+
+
+
+
+@section scripts{
+@Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/upload-image-thumbnail.js"></script>
+}

@@ -1,0 +1,44 @@
+﻿@model PagedList.IPagedList<SimpleBlog.Models.Post>
+@using PagedList.Mvc
+
+
+
+    @if ((string)TempData["deleteError"] == "false")
+            {
+        <div class="alert alert-success alert-dismissable" role="alert">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+            The post was successfully deleted!
+        </div>
+    }
+
+    @foreach (var item in Model)
+            {
+        <div class="post-container">
+            <h2>
+                <a href="@Url.RouteUrl("PostDetails", new { id = item.Id, name = item.GetTitleAsUrl() })">
+                    @Html.DisplayFor(modelItem => item.PostTitle)
+                </a>
+            </h2>
+
+            <p class="icons-area">
+                <span class="glyphicon glyphicon-user icons-area-icon"></span>
+                @Html.DisplayFor(modelItem => item.User.FullNameAndSurname)
+                <span class="glyphicon glyphicon-time icons-area-icon"></span>
+                @Html.DisplayFor(modelItem => item.AddedDate)
+                <span class="glyphicon glyphicon-folder-close icons-area-icon"></span>
+                @Html.RouteLink(item.Category.Name, "PostsByCategory", new { id = item.Category.Id, category = item.Category.Name })
+            </p>
+            <hr />
+            <img class="img-responsive" src="@item.ImagePath" alt="">
+            <hr />
+            <h4>
+                @Html.DisplayFor(modelItem => item.PostIntro)
+            </h4>
+            <a href="@Url.RouteUrl("PostDetails", new { id = item.Id, name = item.GetTitleAsUrl() })" class="btn btn-primary pull-right read-more-button">
+                Read More<span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+            @*@Html.RouteLink("Read More", "PostDetails", new { id = item.Id, name = item.GetTitleAsUrl() }, new { @class = "btn btn-primary pull-right" })*@
+
+        </div>
+    }
+

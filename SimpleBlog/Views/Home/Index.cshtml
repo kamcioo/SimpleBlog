@@ -1,0 +1,47 @@
+﻿@model PagedList.IPagedList<SimpleBlog.Models.Post>
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Simple Blog";
+}
+@Html.Partial("_Header")
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            @Html.Partial("_Posts", Model)
+        </div>
+            <!-- RIGHTS SEARCH BAR / CATEGORIES-->
+            <div class="col-md-4">
+                @{
+                    Html.RenderAction("RightSearchWindow", "Category");
+                }
+            </div> <!-- /.col-md-4-->
+            <!-- PAGINATION -->
+            <div class="row">
+                <div class="col-md-10 text-center">
+                    <div class="">
+                        <br />
+                        Page @(Model.PageCount < Model.PageNumber ? 0 :
+                    @Model.PageNumber) of @Model.PageCount
+                    @Html.PagedListPager(Model, page => Url.Action("Index", "Home", new { page }))
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/change-header-title.js"></script>
+}
+@*@section Scripts{
+    <script>
+        $(document).ready(function () {
+            var strong = "header.intro-header strong";
+            $(strong).on({
+                'click': function () {
+                    $(strong).toggle();
+                }
+            });
+        });
+    </script>
+}*@
