@@ -57,37 +57,29 @@ namespace SimpleBlog
             //   consumerSecret: "");
 
 
-            app.UseFacebookAuthentication(new FacebookAuthenticationOptions()
-            {
-                AppId = "",  // AppId of application in facebook
-                AppSecret = "",     // AppSecret of application in facebook
-                BackchannelHttpHandler = new HttpClientHandler(),
-                UserInformationEndpoint = "https://graph.facebook.com/v2.8/me?fields=id,name,email,first_name,last_name",
-                Scope = { "email" },
-                Provider = new FacebookAuthenticationProvider()
-                {
-                    OnAuthenticated = async context =>
-                    {
-                        context.Identity.AddClaim(new System.Security.Claims.Claim("FacebookAccessToken", context.AccessToken));
-                        foreach (var claim in context.User)
-                        {
-                            var claimType = string.Format("urn:facebook:{0}", claim.Key);
-                            string claimValue = claim.Value.ToString();
-                            if (!context.Identity.HasClaim(claimType, claimValue))
-                                context.Identity.AddClaim(new System.Security.Claims.Claim(claimType, claimValue, "XmlSchemaString", "Facebook"));
-                        }
-                    }
-                }
-            });
-            /*
-            app.UseFacebookAuthentication(
-               appId: "*",
-               appSecret: "*");
-             * */
-
-            //app.UseFacebookAuthentication(
-            //   appId: "",
-            //   appSecret: "");
+            //app.UseFacebookAuthentication(new FacebookAuthenticationOptions()
+            //{
+            //    AppId = "",  // AppId of application in facebook
+            //    AppSecret = "",     // AppSecret of application in facebook
+            //    BackchannelHttpHandler = new HttpClientHandler(),
+            //    UserInformationEndpoint = "https://graph.facebook.com/v2.8/me?fields=id,name,email,first_name,last_name",
+            //    Scope = { "email" },
+            //    Provider = new FacebookAuthenticationProvider()
+            //    {
+            //        OnAuthenticated = async context =>
+            //        {
+            //            context.Identity.AddClaim(new System.Security.Claims.Claim("FacebookAccessToken", context.AccessToken));
+            //            foreach (var claim in context.User)
+            //            {
+            //                var claimType = string.Format("urn:facebook:{0}", claim.Key);
+            //                string claimValue = claim.Value.ToString();
+            //                if (!context.Identity.HasClaim(claimType, claimValue))
+            //                    context.Identity.AddClaim(new System.Security.Claims.Claim(claimType, claimValue, "XmlSchemaString", "Facebook"));
+            //            }
+            //        }
+            //    }
+            //});
+            
 
             //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
             //{
