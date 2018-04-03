@@ -35,6 +35,7 @@ Update-Database
 - Register and login with standard way and via Facebook
 - Manage users: block, delete, change role
 - Search posts by phrase, by category
+- Statistics display
 
 ## Test login data
 - Administrator- login: administrator@gmail.com, password: 1qaz@WSX
